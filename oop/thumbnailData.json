@@ -1,0 +1,60 @@
+{
+  "items": [
+    {
+      "sys": { "id": "1" },
+      "fields": {
+        "category": "Tablets",
+        "image": { "fields": { "file": { "url": "images/thumb/ipads.jpg" } } }
+      }
+    },
+    {
+      "sys": { "id": "2" },
+      "fields": {
+        "category": "Laptops",
+        "image": { "fields": { "file": { "url": "images/thumb/laptops.jpg" } } }
+      }
+    },
+    {
+      "sys": { "id": "3" },
+      "fields": {
+        "category": "Consoles",
+        "image": { "fields": { "file": { "url": "images/thumb/consoles.jpg" } } }
+      }
+    },
+    {
+      "sys": { "id": "4" },
+      "fields": {
+        "category": "TV",
+        "image": { "fields": { "file": { "url": "../images/thumb/tv.jpg" } } }
+      }
+    },
+    {
+      "sys": { "id": "5" },
+      "fields": {
+        "category": "Headphones",
+        "image": { "fields": { "file": { "url": "images/thumb/headphones.jpg" } } }
+      }
+    },
+    {
+      "sys": { "id": "6" },
+      "fields": {
+        "category": "Fridges",
+        "image": { "fields": { "file": { "url": "images/thumb/fridges.jpg" } } }
+      }
+    },
+    {
+      "sys": { "id": "7" },
+      "fields": {
+        "category": "Smartphones",
+        "image": { "fields": { "file": { "url": "images/thumb/phones.jpg" } } }
+      }
+    },
+    {
+      "sys": { "id": "8" },
+      "fields": {
+        "category": "Speakers",
+        "image": { "fields": { "file": { "url": "images/thumb/audio.jpg" } } }
+      }
+    }
+  ]
+}

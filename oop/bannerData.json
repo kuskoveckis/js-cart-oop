@@ -1,0 +1,34 @@
+{
+  "items": [
+    {
+      "sys": { "id": "1" },
+      "fields": {
+        "image": { "fields": { "file": { "url": "images/advert/fullscreen/testImage.jpg" } } }
+      }
+    },
+    {
+      "sys": { "id": "2" },
+      "fields": {
+        "image": { "fields": { "file": { "url": "images/advert/fullscreen/e74667f609f9fc4dcd9c29065cc4e2f1.jpg" } } }
+      }
+    },
+    {
+      "sys": { "id": "3" },
+      "fields": {
+        "image": { "fields": { "file": { "url": "images/advert/fullscreen/2.jpg" } } }
+      }
+    },
+    {
+      "sys": { "id": "4" },
+      "fields": {
+        "image": { "fields": { "file": { "url": "images/advert/fullscreen/3.jpg" } } }
+      }
+    },
+    {
+      "sys": { "id": "5" },
+      "fields": {
+        "image": { "fields": { "file": { "url": "images/advert/fullscreen/4.jpg" } } }
+      }
+    }
+  ]
+}
