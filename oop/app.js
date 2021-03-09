@@ -17,6 +17,17 @@ const productCardsContainer = document.querySelectorAll(".product-cards");
 // filters select options
 const categoriesContainer = document.querySelectorAll(".filter-container");
 const filterSelect = document.querySelectorAll(".filter-container");
+// cart
+const cartSummary = document.querySelector(".cart-summary");
+const cartItemsCont = document.querySelector(".cart-item-container");
+const navCart = document.querySelector(".nav__cart");
+const cartCont = document.querySelector(".cart");
+const closeCartBtn = document.getElementById("cart-cls-btn");
+// PRODUCT PAGE
+const techSpec = document.querySelector(".tech");
+const prodDesc = document.querySelector(".desc");
+const prodDescBody = document.getElementById("product-description-cont");
+const techSpecBody = document.getElementById("tech-spec-desc");
 
 const screenSize = window.innerWidth;
 
@@ -88,6 +99,11 @@ class UI {
     } else {
       this.prodCount = 5;
     }
+  }
+  uiSetup() {
+    this.sideNav();
+    this.showCart();
+    this.closeCart();
   }
   sideNav() {
     hamburger.addEventListener("click", () => {
@@ -191,9 +207,9 @@ class UI {
     Storage.savePopularProducts(popularProducts);
     popularProducts.forEach((product, index) => {
       if (index <= this.prodCount) {
-        result += `<div class="card-item flex-column" data-prod="${product.id}">
+        result += `<div class="card-item flex-column" data-id="${product.id}" data-section="${product.section}">
               <div class="card-img-container">
-                <a href="products.html">
+                <a href="products.html"> 
                   <img class="card__img" src="${product.image}">
                 </a>
               </div>  
@@ -206,6 +222,9 @@ class UI {
       }
     });
     productCardsContainer[0].innerHTML = result;
+    // save clicked product to local storage
+    const productCard = document.querySelectorAll(".card-item");
+    this.getClickedProduct(productCard);
   }
   displayNewProducts(products) {
     let result = "";
@@ -213,7 +232,7 @@ class UI {
     Storage.saveNewProducts(newProducts);
     newProducts.forEach((product, index) => {
       if (index <= this.prodCount) {
-        result += `<div class="card-item flex-column" data-prod="${product.id}">
+        result += `<div class="card-item flex-column" data-id="${product.id}" data-section="${product.section}">
               <div class="card-img-container">
                 <a href="products.html">
                   <img class="card__img" src="${product.image}">
@@ -228,6 +247,9 @@ class UI {
       }
     });
     productCardsContainer[1].innerHTML = result;
+    // save clicked product to local storage
+    const productCard = document.querySelectorAll(".card-item");
+    this.getClickedProduct(productCard);
   }
 
   showMoreProdBtn(products, ev) {
@@ -334,7 +356,130 @@ class UI {
       });
     });
   }
-  getClickedProduct() {}
+
+  showCart() {
+    navCart.addEventListener("click", () => {
+      cartCont.style.width = "100vw";
+    });
+  }
+  closeCart() {
+    closeCartBtn.addEventListener("click", () => {
+      cartCont.style.width = "0";
+    });
+  }
+  getClickedProduct(cards) {
+    cards.forEach((item) => {
+      item.addEventListener("click", (e) => {
+        // get product number
+        const productNumber = e.currentTarget.dataset.id;
+        // get product section
+        const section = e.currentTarget.dataset.section;
+        // get clicked product
+        let products = Storage.getPopularProducts();
+        section === "popular" ? (products = Storage.getPopularProducts()) : (products = Storage.getNewProducts());
+        const clickedItem = products.filter((item) => {
+          if (item.id == productNumber) {
+            return item;
+          }
+        });
+        //save clicked product to local storage
+        Storage.saveItemToDisplay(clickedItem);
+      });
+    });
+  }
+  displayIndividualProduct() {}
+  productDescriptionTech() {
+    techSpec.addEventListener("touchend", (e) => {
+      if (techSpecBody.classList.contains("hidden")) {
+        techSpecBody.classList.remove("hidden");
+        techSpec.style.backgroundColor = "#306bf5";
+        techSpec.style.color = "white";
+      } else {
+        techSpecBody.classList.add("hidden");
+        techSpec.style.backgroundColor = "#f7f9fc";
+        techSpec.style.color = "black";
+      }
+    });
+  }
+  productDescriptionBody() {
+    prodDesc.addEventListener("touchend", (e) => {
+      if (prodDescBody.classList.contains("hidden")) {
+        prodDescBody.classList.remove("hidden");
+        prodDesc.style.backgroundColor = "#306bf5";
+        prodDesc.style.color = "white";
+      } else {
+        prodDescBody.classList.add("hidden");
+        prodDesc.style.backgroundColor = "#f7f9fc";
+        prodDesc.style.color = "black";
+      }
+    });
+  }
+}
+
+class Cart {
+  setupApp() {
+    cart = Storage.getCart();
+    this.generateCartItems(cart);
+    this.displayCartSummary(cart);
+  }
+  generateCartItems(cart) {
+    if (cart.length > 0) {
+      cart = JSON.parse(cartItems).flat(2);
+
+      let displayCartItems = cart.map((item) => {
+        return `<div class="cart-item cart-grid" data-id="${item.id}">
+                   <div class="cart-item__img">
+                     <img src="${item.source}" alt="product image" />
+                   </div>
+                   <div class="cart-item__description flex-column">
+                     <h4 class="cat-item__category">${item.category}</h4>
+                     <h4 class="cart-item__model">${item.model}</h4>
+                     <h4 class="cart-item__brand">${item.brand}</h4>
+                     <span class="cart-item__price">${item.price} $</span>
+                     <span class="cart-item__remove-btn">remove item</span>
+                   </div>
+                   <div class="cart-item__amend flex-column">
+                     <i class="fas fa-plus cart--add" data-prod="${item.prod}"></i>
+                     <span class="cart-item__qty">${item.amount}</span>
+                     <i class="fas fa-minus cart--subtract" data-prod="${item.prod}"></i>
+                   </div>
+                 </div>`;
+      });
+      displayCartItems = displayCartItems.join("");
+      cartItemsCont.innerHTML = displayCartItems;
+
+      // displayCartSummary(cart);
+      // emptyCart("touchend");
+      // emptyCart("click");
+      // changeQty("touchend");
+      // changeQty("click");
+
+      // removeCartItem("click");
+    } else {
+      this.blankCart(cart);
+    }
+  }
+  displayCartSummary(cart) {
+    // get total price of items
+    let cartTotal = 0;
+    cart.map((item) => {
+      cartTotal += parseFloat(item.price) * parseFloat(item.amount);
+    });
+
+    let generateCartSummary = `<h2>Cart total: ${cartTotal.toFixed(2)}$</h2>
+                             <button class="cart__empty">Empty cart</button>
+                             <button class="cart__proceed">Proceed to checkout</button>`;
+
+    cartSummary.innerHTML = generateCartSummary;
+  }
+  blankCart(cart) {
+    if (cart.length < 1) {
+      const displayEmptyCart = `<div>
+                                <p>No items in cart</p>
+                              </div>`;
+      cartItemsCont.innerHTML = displayEmptyCart;
+    }
+  }
 }
 
 class Storage {
@@ -358,26 +503,35 @@ class Storage {
   static getCart() {
     return localStorage.getItem("cart") ? JSON.parse(localStorage.getItem("cart")) : [];
   }
+  static saveItemToDisplay(item) {
+    localStorage.setItem("itemToDisplay", JSON.stringify(item));
+  }
+  static getItemToDisplay() {
+    return localStorage.getItem("itemToDisplay") ? JSON.parse(localStorage.getItem("itemToDisplay")) : [];
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   const ui = new UI();
+  const cart = new Cart();
   const thumbnails = new Thumbnails();
   const products = new Products();
   const banner = new Banner();
 
-  //sidenav
-  ui.sideNav();
+  cart.setupApp();
 
-  //get banner, thumbnails, products
+  //sidenav
+  ui.uiSetup();
+
+  // get and display banner/hero
   banner.getBanner().then((image) => {
     ui.displayBanner(image);
     ui.carousel(image, "touchend");
     ui.carouselBtns(image);
   });
-
+  // get and display thumbnails
   thumbnails.getThumbnails().then((thumbs) => ui.displayThumbnails(thumbs));
-
+  // get and display products
   products.getProducts().then((products) => {
     ui.displayPopularProducts(products);
     ui.displayNewProducts(products);
@@ -385,3 +539,5 @@ document.addEventListener("DOMContentLoaded", () => {
     ui.showMoreProdBtn(products, "click");
   });
 });
+
+export { UI, Cart, Storage };
