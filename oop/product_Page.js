@@ -1,48 +1,93 @@
-import { UI, Cart, Storage } from "./app.js";
+import { UI, Cart, Storage, cart } from "./app.js";
 
 // OOP
-// VARIABLES
-const catThumbs = document.getElementById("promo-card-group");
-// Sidenav
-const sidenav = document.getElementById("sidenav");
-const sidenavCloseBtn = document.getElementById("sidenav-close-btn");
-const hamburger = document.getElementById("hamburger");
-const dropdown = document.getElementById("dropdown--toggle");
-const ddCaret = document.getElementById("caret");
-const ddMenu = document.getElementById("dropdown__menu");
-// banner/carousel
-const carousel = document.getElementById("promo-carousel");
-const btnLeft = document.getElementById("carousle-btn-left");
-const btnRight = document.getElementById("carousle-btn-right");
-// product cards
-const productCardsContainer = document.querySelectorAll(".product-cards");
-// filters select options
-const categoriesContainer = document.querySelectorAll(".filter-container");
-const filterSelect = document.querySelectorAll(".filter-container");
-// cart
-const cartSummary = document.querySelector(".cart-summary");
-const cartItemsCont = document.querySelector(".cart-item-container");
-const navCart = document.querySelector(".nav__cart");
-const cartCont = document.querySelector(".cart");
-const closeCartBtn = document.getElementById("cart-cls-btn");
-// PRODUCT PAGE
+// product description
 const techSpec = document.querySelector(".tech");
 const prodDesc = document.querySelector(".desc");
 const prodDescBody = document.getElementById("product-description-cont");
 const techSpecBody = document.getElementById("tech-spec-desc");
+// displaying product on page
+const prodHeading = document.querySelector(".product__header__heading");
+const prodPhoto = document.getElementById("product__img");
+const prodPrice = document.querySelector(".product__price");
+const addBtn = document.querySelectorAll(".product__action__btn");
+const addToCartBtn = document.getElementById("product__action__btn");
 
-const screenSize = window.innerWidth;
+// const screenSize = window.innerWidth;
 
-//CART
-let cart = [];
-let test = [];
+class ProductPageUI {
+  productDescriptionTech() {
+    techSpec.addEventListener("click", (e) => {
+      if (techSpecBody.classList.contains("hidden")) {
+        techSpecBody.classList.remove("hidden");
+        techSpec.style.backgroundColor = "#306bf5";
+        techSpec.style.color = "white";
+      } else {
+        techSpecBody.classList.add("hidden");
+        techSpec.style.backgroundColor = "#f7f9fc";
+        techSpec.style.color = "black";
+      }
+    });
+  }
+  productDescriptionBody() {
+    prodDesc.addEventListener("touchend", (e) => {
+      if (prodDescBody.classList.contains("hidden")) {
+        prodDescBody.classList.remove("hidden");
+        prodDesc.style.backgroundColor = "#306bf5";
+        prodDesc.style.color = "white";
+      } else {
+        prodDescBody.classList.add("hidden");
+        prodDesc.style.backgroundColor = "#f7f9fc";
+        prodDesc.style.color = "black";
+      }
+    });
+  }
+  displayIndividualProduct() {
+    const item = Storage.getItemToDisplay();
+
+    prodHeading.textContent = item[0].model;
+    prodPhoto.src = item[0].image;
+    prodPrice.textContent = item[0].price + "$";
+    addBtn.forEach((element) => {
+      element.setAttribute("data-id", item[0].id);
+      element.setAttribute("data-section", item[0].section);
+    });
+  }
+  getAddToCartBtn() {
+    addToCartBtn.addEventListener("click", (e) => {
+      // get product id
+      const prodId = parseInt(e.target.dataset.id);
+      const prodSection = e.target.dataset.section;
+      console.log(prodId);
+      console.log(prodSection);
+      // get product from local storage
+      let products = [];
+      prodSection === "popular" ? (products = Storage.getPopularProducts()) : (products = Storage.getNewProducts());
+      console.log(products);
+      let product = products.filter((item) => {
+        if (parseInt(item.id) === prodId) {
+          item.amount = 1;
+          return item;
+        }
+      });
+
+      // check if item in array
+      console.log(product);
+      // add product to local storage
+      cart.push(product);
+      Storage.saveCart(cart.flat(2));
+      console.log(cart);
+      // localStorage.setItem("cart", JSON.stringify(cartLs));
+      // cartBadge();
+      // generateCartItems();
+    });
+  }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
-  const test1 = new UI();
-  const test2 = new Cart();
-  const products = new Products();
-
-  test2.setupApp();
-  //sidenav
-  test1.uiSetup();
+  const pageUI = new ProductPageUI();
+  pageUI.productDescriptionTech();
+  pageUI.productDescriptionBody();
+  pageUI.displayIndividualProduct();
+  pageUI.getAddToCartBtn();
 });

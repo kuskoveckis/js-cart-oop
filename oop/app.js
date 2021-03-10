@@ -23,17 +23,13 @@ const cartItemsCont = document.querySelector(".cart-item-container");
 const navCart = document.querySelector(".nav__cart");
 const cartCont = document.querySelector(".cart");
 const closeCartBtn = document.getElementById("cart-cls-btn");
-// PRODUCT PAGE
-const techSpec = document.querySelector(".tech");
-const prodDesc = document.querySelector(".desc");
-const prodDescBody = document.getElementById("product-description-cont");
-const techSpecBody = document.getElementById("tech-spec-desc");
+const clearCartBtn = document.querySelector(".cart__empty");
 
 const screenSize = window.innerWidth;
 
 //CART
-let cart = [];
-let test = [];
+var cart = [];
+let btns = [];
 
 class Banner {
   async getBanner() {
@@ -254,7 +250,7 @@ class UI {
 
   showMoreProdBtn(products, ev) {
     let buttons = [...document.querySelectorAll(".more-btn")];
-    test = buttons; // ! what does this do?
+    btns = buttons; // ! what does this do?
     buttons.forEach((btn) => {
       btn.addEventListener(ev, (e) => {
         let productQty;
@@ -387,33 +383,6 @@ class UI {
       });
     });
   }
-  displayIndividualProduct() {}
-  productDescriptionTech() {
-    techSpec.addEventListener("touchend", (e) => {
-      if (techSpecBody.classList.contains("hidden")) {
-        techSpecBody.classList.remove("hidden");
-        techSpec.style.backgroundColor = "#306bf5";
-        techSpec.style.color = "white";
-      } else {
-        techSpecBody.classList.add("hidden");
-        techSpec.style.backgroundColor = "#f7f9fc";
-        techSpec.style.color = "black";
-      }
-    });
-  }
-  productDescriptionBody() {
-    prodDesc.addEventListener("touchend", (e) => {
-      if (prodDescBody.classList.contains("hidden")) {
-        prodDescBody.classList.remove("hidden");
-        prodDesc.style.backgroundColor = "#306bf5";
-        prodDesc.style.color = "white";
-      } else {
-        prodDescBody.classList.add("hidden");
-        prodDesc.style.backgroundColor = "#f7f9fc";
-        prodDesc.style.color = "black";
-      }
-    });
-  }
 }
 
 class Cart {
@@ -424,12 +393,12 @@ class Cart {
   }
   generateCartItems(cart) {
     if (cart.length > 0) {
-      cart = JSON.parse(cartItems).flat(2);
+      // cart = JSON.parse(cartItems).flat(2);
 
       let displayCartItems = cart.map((item) => {
         return `<div class="cart-item cart-grid" data-id="${item.id}">
                    <div class="cart-item__img">
-                     <img src="${item.source}" alt="product image" />
+                     <img src="${item.image}" alt="product image" />
                    </div>
                    <div class="cart-item__description flex-column">
                      <h4 class="cat-item__category">${item.category}</h4>
@@ -439,9 +408,9 @@ class Cart {
                      <span class="cart-item__remove-btn">remove item</span>
                    </div>
                    <div class="cart-item__amend flex-column">
-                     <i class="fas fa-plus cart--add" data-prod="${item.prod}"></i>
+                     <i class="fas fa-plus cart--add" data-id="${item.id}"></i>
                      <span class="cart-item__qty">${item.amount}</span>
-                     <i class="fas fa-minus cart--subtract" data-prod="${item.prod}"></i>
+                     <i class="fas fa-minus cart--subtract" data-id="${item.id}"></i>
                    </div>
                  </div>`;
       });
@@ -466,9 +435,7 @@ class Cart {
       cartTotal += parseFloat(item.price) * parseFloat(item.amount);
     });
 
-    let generateCartSummary = `<h2>Cart total: ${cartTotal.toFixed(2)}$</h2>
-                             <button class="cart__empty">Empty cart</button>
-                             <button class="cart__proceed">Proceed to checkout</button>`;
+    let generateCartSummary = `<h2>Cart total: ${cartTotal.toFixed(2)}$</h2>`;
 
     cartSummary.innerHTML = generateCartSummary;
   }
@@ -479,6 +446,17 @@ class Cart {
                               </div>`;
       cartItemsCont.innerHTML = displayEmptyCart;
     }
+  }
+  clearCart() {
+    localStorage.removeItem("cart");
+    cart.length = 0;
+  }
+  cartLogic() {
+    clearCartBtn.addEventListener("click", () => {
+      this.clearCart();
+      this.generateCartItems();
+      this.displayCartSummary();
+    });
   }
 }
 
@@ -513,15 +491,16 @@ class Storage {
 
 document.addEventListener("DOMContentLoaded", () => {
   const ui = new UI();
-  const cart = new Cart();
+  const newCart = new Cart();
   const thumbnails = new Thumbnails();
   const products = new Products();
   const banner = new Banner();
 
-  cart.setupApp();
-
   //sidenav
   ui.uiSetup();
+
+  newCart.cartLogic();
+  newCart.setupApp();
 
   // get and display banner/hero
   banner.getBanner().then((image) => {
@@ -532,12 +511,17 @@ document.addEventListener("DOMContentLoaded", () => {
   // get and display thumbnails
   thumbnails.getThumbnails().then((thumbs) => ui.displayThumbnails(thumbs));
   // get and display products
-  products.getProducts().then((products) => {
-    ui.displayPopularProducts(products);
-    ui.displayNewProducts(products);
-    ui.productFilterBtns(products);
-    ui.showMoreProdBtn(products, "click");
-  });
+  products
+    .getProducts()
+    .then((products) => {
+      ui.displayPopularProducts(products);
+      ui.displayNewProducts(products);
+      ui.productFilterBtns(products);
+      ui.showMoreProdBtn(products, "click");
+    })
+    .then(() => {
+      // cart.cartLogic();
+    });
 });
 
-export { UI, Cart, Storage };
+export { UI, Cart, Storage, cart };
