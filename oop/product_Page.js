@@ -11,8 +11,6 @@ const prodHeading = document.querySelector(".product__header__heading");
 const prodPhoto = document.getElementById("product__img");
 const prodPrice = document.querySelector(".product__price");
 const addBtn = document.querySelectorAll(".product__action__btn");
-const addToCartBtn = document.getElementById("product__action__btn");
-
 // const screenSize = window.innerWidth;
 
 class ProductPageUI {
@@ -53,41 +51,14 @@ class ProductPageUI {
       element.setAttribute("data-section", item[0].section);
     });
   }
-  getAddToCartBtn() {
-    addToCartBtn.addEventListener("click", (e) => {
-      // get product id
-      const prodId = parseInt(e.target.dataset.id);
-      const prodSection = e.target.dataset.section;
-      console.log(prodId);
-      console.log(prodSection);
-      // get product from local storage
-      let products = [];
-      prodSection === "popular" ? (products = Storage.getPopularProducts()) : (products = Storage.getNewProducts());
-      console.log(products);
-      let product = products.filter((item) => {
-        if (parseInt(item.id) === prodId) {
-          item.amount = 1;
-          return item;
-        }
-      });
-
-      // check if item in array
-      console.log(product);
-      // add product to local storage
-      cart.push(product);
-      Storage.saveCart(cart.flat(2));
-      console.log(cart);
-      // localStorage.setItem("cart", JSON.stringify(cartLs));
-      // cartBadge();
-      // generateCartItems();
-    });
-  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   const pageUI = new ProductPageUI();
+  const cart = new Cart();
   pageUI.productDescriptionTech();
   pageUI.productDescriptionBody();
   pageUI.displayIndividualProduct();
-  pageUI.getAddToCartBtn();
+  cart.getAddToCartBtn();
+  cart.addToCart();
 });

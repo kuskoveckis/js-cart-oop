@@ -794,6 +794,7 @@ aside {
 
 .product__action__btn:hover {
   background-color: var(--color-goldenDark);
+  cursor: pointer;
 }
 
 .return-container {
