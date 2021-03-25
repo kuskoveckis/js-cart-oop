@@ -79,7 +79,7 @@ class Products {
       accessToken: "QgNQ-iRJuZvEJ1Ycw5N3XNpt3apNZp6pB7JKFomUO00",
     });
     try {
-      let content = await client.getEntries();
+      let content = await client.getEntries({ content_type: "eCommerceStore" });
       let products = content.items;
       products = products.map((item) => {
         const { id } = item.sys;
